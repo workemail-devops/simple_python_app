@@ -37,5 +37,5 @@ jobs:
           username: ubuntu
           key: ${{ secrets.DEV_SSH_KEY }}
           script: |
-            cd /home/ubuntu/simple_python_app
+            cd simple_python_app
             bash deploy.sh
