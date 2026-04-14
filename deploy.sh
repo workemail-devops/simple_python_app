@@ -8,17 +8,6 @@ sudo apt update -y
 echo "Installing python"
 sudo apt install python3-pip -y
 
-echo "Creating project folder"
-mkdir -p simple_python_app
-cd simple_python_app
-
-echo "Cloning repo"
-if [ ! -d ".git" ]; then
-  git clone git@github.com:workemail-devops/simple_python_app.git .
-else
-  git pull origin dev
-fi
-
 echo "Installing dependencies"
 pip3 install -r requirements.txt
 
