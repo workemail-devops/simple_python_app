@@ -39,10 +39,12 @@ jobs:
           script: |
             cd /home/ubuntu
             if [ ! -d "simple_python_app" ]; then
-              git clone https://${{ secrets.GH_TOKEN }}@github.com/workemail-devops/simple_python_app.git
+              rm -rf simple_python_app
             fi
+
+            git clone https://${{ secrets.GH_TOKEN }}@github.com/workemail-devops/simple_python_app.git
+
             cd simple_python_app
-            git pull origin dev
 
             chmod +x deploy.sh
             bash deploy.sh
