@@ -37,5 +37,9 @@ jobs:
           username: ubuntu
           key: ${{ secrets.DEV_SSH_KEY }}
           script: |
-            cd /home/ubuntu/simple_python_app
+            cd /home/ubuntu
+            if [ ! -d "simple_python_app" ]; then
+              git clone git@github.com:workemail-devops/simple_python_app.git
+            fi
+            cd simple_python_app
             bash deploy.sh
