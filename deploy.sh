@@ -5,8 +5,14 @@ set -e
 echo "Updating system"
 sudo apt update -y
 
-echo "Installing python"
-sudo apt install python3-pip -y
+echo "Installing python venv"
+sudo apt install python3-venv -y
+
+echo "Creating virtual environment"
+python3 -m venv venv
+
+echo "Activating venv"
+source venv/bin/activate
 
 echo "Installing dependencies"
 pip3 install -r requirements.txt
