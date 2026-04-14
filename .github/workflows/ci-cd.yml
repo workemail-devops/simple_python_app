@@ -23,3 +23,19 @@ jobs:
 
       - name: Run test
         run: pytest
+
+  deploy-dev:
+    if: github.ref == 'refs/heads/dev'
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Execute script on EC2
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.DEV_HOST }}
+          username: ubuntu
+          key: ${{ secrets.DEV_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/simple_python_app
+            bash deploy.sh
