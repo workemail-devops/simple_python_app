@@ -42,7 +42,7 @@ jobs:
               rm -rf simple_python_app
             fi
 
-            git clone https://${{ secrets.GH_TOKEN }}@github.com/workemail-devops/simple_python_app.git
+            git clone-b dev https://${{ secrets.GH_TOKEN }}@github.com/workemail-devops/simple_python_app.git
 
             cd simple_python_app
 
