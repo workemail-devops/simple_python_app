@@ -38,7 +38,7 @@ jobs:
           key: ${{ secrets.DEV_SSH_KEY }}
           script: |
             cd /home/ubuntu
-            if [ ! -d "simple_python_app" ]; then
+            if [ -d "simple_python_app" ]; then
               rm -rf simple_python_app
             fi
 
