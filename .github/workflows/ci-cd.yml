@@ -1,50 +1,45 @@
-name: Python CI CD
+name: Docker CI/CD
 
 on:
   push:
     branches:
       - dev
-      - main
+
 jobs:
-  test:
+
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-      - name: checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Setup python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
+      - name: Login to DockerHub
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+      - name: Build Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/myapp:latest .
 
-      - name: Run test
-        run: pytest
+      - name: Push Image
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/myapp:latest
 
-  deploy-dev:
-    if: github.ref == 'refs/heads/dev'
-    needs: test
+  deploy:
+    needs: build-and-push
     runs-on: ubuntu-latest
 
     steps:
-      - name: Execute script on EC2
+      - name: Deploy to EC2
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.DEV_HOST }}
           username: ubuntu
           key: ${{ secrets.DEV_SSH_KEY }}
           script: |
-            cd /home/ubuntu
-            if [ -d "simple_python_app" ]; then
-              rm -rf simple_python_app
-            fi
+            docker pull ${{ secrets.DOCKER_USERNAME }}/simple_python_app:latest
 
-            git clone -b dev https://${{ secrets.GH_TOKEN }}@github.com/workemail-devops/simple_python_app.git
+            docker stop myapp || true
+            docker rm myapp || true
 
-            cd simple_python_app
-
-            chmod +x deploy.sh
-            bash deploy.sh
+            docker run -d -p 5000:5000 --name myapp ${{ secrets.DOCKER_USERNAME }}/myapp:latest
